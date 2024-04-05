@@ -371,31 +371,33 @@ To replace the generated urls like `rex_news://1`, the following script must be 
 This would require the code for the urls to be modified. 
 
 ```php
-rex_extension::register('OUTPUT_FILTER', function(\rex_extension_point $ep) {
-    return preg_replace_callback(
-        '@((rex_news|rex_person))://(\d+)(?:-(\d+))?/?@i',
-        function ($matches) {
-            // table = $matches[1]
-            // id = $matches[3]
-            $url = '';
-            switch ($matches[1]) {
-                case 'news':
-                    // Example, if the Urls are generated via Url-AddOn  
-                    $id = $matches[3];
-                    if ($id) {
-                       return rex_getUrl('', '', ['news' => $id]); 
-                    }
-                    break;
-                case 'person':
-                    // ein anderes Beispiel 
-                    $url = '/index.php?person='.$matches[3];
-                    break;
-            }
-            return $url;
-        },
-        $ep->getSubject()
-    );
-}, rex_extension::NORMAL);
+if (rex::isFrontend()) {
+	rex_extension::register('OUTPUT_FILTER', function(\rex_extension_point $ep) {
+	    return preg_replace_callback(
+	        '@((rex_news|rex_person))://(\d+)(?:-(\d+))?/?@i',
+	        function ($matches) {
+	            // table = $matches[1]
+	            // id = $matches[3]
+	            $url = '';
+	            switch ($matches[1]) {
+	                case 'news':
+	                    // Example, if the Urls are generated via Url-AddOn  
+	                    $id = $matches[3];
+	                    if ($id) {
+	                       return rex_getUrl('', '', ['news' => $id]); 
+	                    }
+	                    break;
+	                case 'person':
+	                    // ein anderes Beispiel 
+	                    $url = '/index.php?person='.$matches[3];
+	                    break;
+	            }
+	            return $url;
+	        },
+	        $ep->getSubject()
+	    );
+	}, rex_extension::NORMAL);
+}
 ```
 
 ### Profile API
